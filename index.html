@@ -25,7 +25,7 @@
     .subcat-strip::-webkit-scrollbar-thumb { border-radius: 10px; background: rgba(0,0,0,.15); }
     .subcat-chip { scroll-snap-align: start; white-space: nowrap; }
 
-    .section-anchor { scroll-margin-top: 160px; } /* for sticky header spacing */
+    .section-anchor { scroll-margin-top: 160px; }
 
     .menu-card {
       border: 0;
@@ -68,9 +68,7 @@
           <div class="fw-semibold">Subcategories</div>
           <button id="scrollToTopBtn" class="btn btn-sm btn-outline-secondary">Top</button>
         </div>
-        <div class="mt-2 subcat-strip" id="subcatStrip">
-          <!-- chips inserted here -->
-        </div>
+        <div class="mt-2 subcat-strip" id="subcatStrip"></div>
       </div>
     </div>
   </div>
@@ -85,7 +83,7 @@
 
   <script>
     // =========================
-    // CONFIG (CHANGE THESE)
+    // CONFIG
     // =========================
     const SUPABASE_URL = "https://ixqtbndjbqbkapghoszx.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_PAK28m8_Q4BpETQ0YWHjDg_oifolhDG";
@@ -93,12 +91,11 @@
     const TABLE_NAME = "menu_items";
     const IMAGE_BUCKET = "menu-images"; // Supabase Storage bucket name (public)
 
-    const CATEGORIES = ["Food", "Drinks", "Desserts"];
-
     // =========================
-    // STATE
+    // STATE (single client, no redeclare issues)
     // =========================
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.__db = window.__db || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const db = window.__db;
 
     let allItems = [];
     let currentCategory = "Food";
@@ -141,13 +138,11 @@
 
     function getPublicImageUrl(image_path) {
       if (!image_path) return null;
-      const res = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(image_path);
+      const res = db.storage.from(IMAGE_BUCKET).getPublicUrl(image_path);
       return res?.data?.publicUrl || null;
     }
 
     function resolveImageUrl(item) {
-      // If later you prefer saving full URLs in DB, add image_url column and use it here.
-      // For now we use Storage + image_path.
       if (item.image_path) return getPublicImageUrl(item.image_path);
       return null;
     }
@@ -158,28 +153,24 @@
     async function fetchMenuItems() {
       el("statusText").textContent = "Loading menu from database…";
 
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from(TABLE_NAME)
         .select("id, category, subcategory, name, description, price, image_path, is_available")
         .eq("is_available", true);
 
       if (error) {
-        console.error(error);
+        console.error("Supabase error:", error);
         el("statusText").textContent = "Failed to load menu.";
         el("content").innerHTML = `
           <div class="alert alert-danger">
-            Could not load menu items. Check:
-            <ul class="mb-0">
-              <li>SUPABASE_URL and SUPABASE_ANON_KEY</li>
-              <li>Table name: ${TABLE_NAME}</li>
-              <li>RLS policy allows SELECT for anonymous (or RLS off)</li>
-            </ul>
+            <div class="fw-semibold mb-2">Could not load menu items</div>
+            <pre class="mb-0">${JSON.stringify(error, null, 2)}</pre>
           </div>`;
         return;
       }
 
       allItems = data || [];
-      el("statusText").textContent = "Loaded.";
+      el("statusText").textContent = `Loaded (${allItems.length} items).`;
     }
 
     // =========================
@@ -291,7 +282,10 @@
     function renderCurrentCategory() {
       renderCategoryButtons();
 
-      const itemsForCategory = allItems.filter(x => String(x.category) === currentCategory);
+      // be tolerant to spaces/case so it never breaks again
+      const itemsForCategory = allItems.filter(x =>
+        String(x.category || "").trim().toLowerCase() === currentCategory.toLowerCase()
+      );
 
       const grouped = groupBy(itemsForCategory, x => x.subcategory || "Other");
       const subcategories = Array.from(grouped.keys()).sort((a,b) => String(a).localeCompare(String(b)));
