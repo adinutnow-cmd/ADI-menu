@@ -299,16 +299,23 @@
       );
     }
 
-    function getPublicImageUrl(image_path) {
-      if (!image_path) return null;
-      const res = db.storage.from(IMAGE_BUCKET).getPublicUrl(image_path);
-      return res?.data?.publicUrl || null;
-    }
+ function getPublicImageUrl(image_path) {
+  if (!image_path) return null;
 
-    function resolveImageUrl(item) {
-      if (item.image_path) return getPublicImageUrl(item.image_path);
-      return null;
-    }
+  const safePath = String(image_path)
+    .trim()
+    .split("/")
+    .map(part => encodeURIComponent(part.trim()))
+    .join("/");
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${IMAGE_BUCKET}/${safePath}`;
+}
+
+
+ function resolveImageUrl(item) {
+  return item.image_path ? getPublicImageUrl(item.image_path) : null;
+}
+
 
 
     async function fetchMenuItems() {
@@ -399,91 +406,92 @@ function markTruncatedDescriptions() {
       }
     }
 
-    function renderSections(itemsForCategory) {
-      const content = el("content");
-      content.innerHTML = "";
+   function renderSections(itemsForCategory) {
+  const content = el("content");
+  content.innerHTML = "";
 
-      if (itemsForCategory.length === 0) {
-        content.innerHTML = `
-          <div class="alert alert-warning">
-            No items found in <strong>${currentCategory}</strong>.
-          </div>`;
-        return;
-      }
+  if (itemsForCategory.length === 0) {
+    content.innerHTML = `
+      <div class="alert alert-warning">
+        No items found in <strong>${currentCategory}</strong>.
+      </div>
+    `;
+    return;
+  }
 
-      const grouped = groupBy(itemsForCategory, x => x.subcategory || "Other");
-      const subcats = Array.from(grouped.keys()).sort((a, b) => {
-      const oa = Math.min(...(grouped.get(a) || []).map(x => Number(x.subcategory_order ?? 999)));
-      const ob = Math.min(...(grouped.get(b) || []).map(x => Number(x.subcategory_order ?? 999)));
-      if (oa !== ob) return oa - ob;
-       return String(a).localeCompare(String(b));
-      });
+  const grouped = groupBy(itemsForCategory, x => x.subcategory || "Other");
 
+  const subcats = Array.from(grouped.keys()).sort((a, b) => {
+    const oa = Math.min(...(grouped.get(a) || []).map(x => Number(x.subcategory_order ?? 999)));
+    const ob = Math.min(...(grouped.get(b) || []).map(x => Number(x.subcategory_order ?? 999)));
+    if (oa !== ob) return oa - ob;
+    return String(a).localeCompare(String(b));
+  });
 
-      for (const subcat of subcats) {
-        const sectionId = `${slugify(currentCategory)}-${slugify(subcat)}`;
+  for (const subcat of subcats) {
+    const sectionId = `${slugify(currentCategory)}-${slugify(subcat)}`;
 
-        const section = document.createElement("section");
-        section.className = "mb-5 section-anchor";
-        section.id = sectionId;
+    const section = document.createElement("section");
+    section.className = "mb-5 section-anchor";
+    section.id = sectionId;
 
-        section.innerHTML = `
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <h2 class="subcat-title">${subcat}</h2>
-          </div>
-          <div class="row g-3" id="grid-${sectionId}"></div>
-        `;
+    section.innerHTML = `
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="subcat-title">${subcat}</h2>
+      </div>
+      <div class="row g-3" id="grid-${sectionId}"></div>
+    `;
 
-        content.appendChild(section);
+    content.appendChild(section);
 
-        const grid = document.getElementById(`grid-${sectionId}`);
-        const itemsSorted = sortByName(grouped.get(subcat));
+    const grid = document.getElementById(`grid-${sectionId}`);
+    const itemsSorted = sortByName(grouped.get(subcat));
 
-        for (const item of itemsSorted) {
-          const imgUrl = resolveImageUrl(item);
+    for (const item of itemsSorted) {
+      const imgUrl = resolveImageUrl(item);
+      const finalImgUrl = imgUrl || "./assets/placeholder.png";
 
-          const col = document.createElement("div");
-          col.className = "col-12 col-md-6 col-lg-4";
+      const col = document.createElement("div");
+      col.className = "col-12 col-md-6 col-lg-4";
 
-          col.innerHTML = `
-            <div class="card menu-card h-100">
-              ${
-                imgUrl
-                  ? `<img
-  src="${imgUrl ? imgUrl : './assets/placeholder.png'}"
-  alt="${item.name || 'Menu item'}"
-  class="item-img"
-  loading="lazy"
-  onerror="this.onerror=null; this.src='./assets/placeholder.png';"
-/>
+      col.innerHTML = `
+        <div class="card menu-card h-100">
+          <img
+            src="${finalImgUrl}"
+            alt="${item.name || "Menu item"}"
+            class="item-img"
+            loading="lazy"
+            onerror="this.onerror=null; this.src='./assets/placeholder.png';"
+          />
 
-`
-                  : `<div class="item-img d-flex align-items-center justify-content-center text-muted">
-                       No Image
-                     </div>`
-              }
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start gap-3">
-                  <div>
-                    <div class="item-name fw-semibold">${item.name ?? ""}</div>
-                    ${item.description ? `
-  <div class="item-desc-wrap">
-    <span class="item-desc">${item.description}</span>
-    <span class="desc-more">more</span>
-  </div>
-` : ""}
-                  </div>
-                  <div class="price">${priceUSD(item.price)}</div>
-                </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start gap-3">
+              <div>
+                <div class="item-name fw-semibold">${item.name ?? ""}</div>
+                ${
+                  item.description
+                    ? `
+                      <div class="item-desc-wrap">
+                        <span class="item-desc">${item.description}</span>
+                        <span class="desc-more">more</span>
+                      </div>
+                    `
+                    : ""
+                }
               </div>
+              <div class="price">${priceUSD(item.price)}</div>
             </div>
-          `;
+          </div>
+        </div>
+      `;
 
-          grid.appendChild(col);
-        }
-      }
-      markTruncatedDescriptions();
+      grid.appendChild(col);
     }
+  }
+
+  // IMPORTANT: call after DOM is rendered
+  markTruncatedDescriptions();
+}
 
 
     function renderCurrentCategory() {
