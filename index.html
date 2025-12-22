@@ -90,19 +90,6 @@
 
   .section-anchor{ scroll-margin-top: 175px; }
 
-  /* section title */
-  .section-title{
-    display:flex;
-    align-items:center;
-    gap:.6rem;
-  }
-  .section-dot{
-    width:10px; height:10px;
-    border-radius:999px;
-    background: var(--adi-gold);
-    box-shadow: 0 6px 14px rgba(242,178,26,.25);
-  }
-
   /* cards */
   .menu-card{
     border-radius: 18px;
@@ -130,69 +117,52 @@
      font-weight: 700;
   }
 
-.menu-card .card-body{
-  padding: .7rem .75rem; /* smaller card */
-}
-.subcat-title {
-  font-size: 1.15rem;    
-  font-weight: 800;        
-  letter-spacing: .2px;
-  color: var(--adi-ink);
-  margin-bottom: .75rem;
-  margin-top: 1.25rem;
-}
+  .menu-card .card-body{
+    padding: .7rem .75rem;
+  }
 
+  .subcat-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: .2px;
+    color: var(--adi-ink);
+    margin-bottom: .75rem;
+    margin-top: 1.25rem;
+  }
 
+  .item-desc{
+    color: var(--adi-muted);
+    font-size: 0.82rem;
+    line-height: 1.15rem;
+    margin-top: .25rem;
 
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
 
+    cursor: pointer;
+    position: relative;
+  }
 
-.item-desc{
-  color: var(--adi-muted);
-  font-size: 0.82rem;
-  line-height: 1.15rem;
-  margin-top: .25rem;
+  .item-desc.expanded{
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+  }
 
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;  
-  overflow: hidden;
+  .desc-more{
+    display: none;
+    color: var(--adi-teal-dark);
+    font-weight: 600;
+    font-size: 0.82rem;
+    margin-left: .25rem;
+  }
+  .item-desc-wrap.truncated .desc-more{ display:inline; }
+  .item-desc-wrap.expanded .desc-more{ display:none; }
 
-  cursor: pointer;
-  position: relative;
-}
-
-
-
-
-
-.item-desc.expanded{
-  display: block;
-  overflow: visible;
-  -webkit-line-clamp: unset;
-  -webkit-box-orient: unset;
-}
-
-
-.desc-more{
-  display: none;
-  color: var(--adi-teal-dark);
-  font-weight: 600;
-  font-size: 0.82rem;
-  margin-left: .25rem;
-}
-
-.item-desc-wrap.truncated .desc-more{
-  display: inline;
-}
-
-.item-desc-wrap.expanded .desc-more {
-  display: none;
-}
-
-
-
-
-.price{
+  .price{
     font-weight: 800;
     white-space: nowrap;
     padding: .18rem .5rem;
@@ -202,11 +172,40 @@
     color:#7A5200;
   }
 
-  #scrollToTopBtn{
-    border-radius: 999px;
-  }
-</style>
+  #scrollToTopBtn{ border-radius: 999px; }
 
+  /* Cart button */
+  .cart-btn{
+    border-radius: 999px !important;
+  }
+  .cart-badge{
+    background: var(--adi-orange);
+  }
+
+  /* Cart modal */
+  .cart-item-img{
+    width:44px;height:44px;object-fit:cover;border-radius:10px;background:#eef2f7;
+    border:1px solid rgba(0,0,0,.06);
+  }
+
+  /* ✅ ORDER BUTTON (fix wrap + responsive width) */
+ /* ✅ only the button */
+.order-btn{
+  border-radius: 999px !important;
+  white-space: nowrap;
+  min-width: 112px;
+  padding-left: .75rem;
+  padding-right: .75rem;
+}
+
+@media (max-width: 380px){
+  .order-btn{ min-width: 96px; font-size: .82rem; }
+}
+#cartOrderCode{
+  display:none !important;
+}
+
+  </style>
 </head>
 
 <body>
@@ -214,22 +213,27 @@
   <div class="sticky-top bg-white sticky-top-shadow">
     <div class="container py-3" id="top">
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-      <div class="brandbar">
-
-      <img class="brand-logo" src="assets/adi-logo.jpg" alt="ADI" />
-  <div>
-    <h1 class="h4 mb-0">Menu</h1>
-    <small class="text-muted" id="statusText">Loading…</small>
-  </div>
-</div>
-
-
-        <div class="d-flex flex-wrap gap-2 gap-md-3" role="group" aria-label="Categories">
-
-          <button class="btn btn-outline-dark category-btn" data-category="Food">Food</button>
-          <button class="btn btn-outline-dark category-btn" data-category="Drinks">Drinks</button>
-          <button class="btn btn-outline-dark category-btn" data-category="Desserts">Desserts</button>
+        <div class="brandbar">
+          <img class="brand-logo" src="assets/adi-logo.jpg" alt="ADI" />
+          <div>
+            <h1 class="h4 mb-0">Menu</h1>
+            <small class="text-muted" id="statusText">Loading…</small>
+          </div>
         </div>
+
+<div class="d-flex flex-wrap gap-2 gap-md-3 align-items-center w-100" role="group" aria-label="Categories">
+  <button class="btn btn-outline-dark category-btn" data-category="Food">Food</button>
+  <button class="btn btn-outline-dark category-btn" data-category="Drinks">Drinks</button>
+  <button class="btn btn-outline-dark category-btn" data-category="Desserts">Desserts</button>
+
+  <!-- CART BUTTON (far right) -->
+  <button id="openCartBtn"
+          class="btn btn-dark cart-btn d-flex align-items-center gap-2 ms-auto"
+          data-bs-toggle="modal" data-bs-target="#cartModal">
+    My Order
+    <span id="cartCountBadge" class="badge rounded-pill cart-badge">0</span>
+  </button>
+</div>
       </div>
 
       <div class="mt-3">
@@ -246,27 +250,71 @@
     <div id="content"></div>
   </main>
 
+  <!-- CART MODAL -->
+  <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content" style="border-radius:18px; overflow:hidden;">
+        <div class="modal-header">
+          <div class="d-flex flex-column">
+            <h5 class="modal-title mb-0">Your Order</h5>
+            <small class="text-muted" id="cartOrderCode">Order Code: —</small>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
 
+        <div class="modal-body">
+          <div id="cartEmpty" class="text-center py-5 text-muted" style="display:none;">
+            Order is empty.
+          </div>
+
+          <div id="cartList" class="list-group"></div>
+
+          <div class="mt-3 d-flex justify-content-between align-items-center">
+            <div class="fw-semibold">Total</div>
+            <div class="fw-bold" id="cartTotal">$0.00</div>
+          </div>
+        </div>
+
+        <!-- ✅ EDITED FOOTER: only Clear + Close -->
+        <div class="modal-footer d-flex justify-content-between">
+          <button id="clearCartBtn" class="btn btn-outline-danger">Clear</button>
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase JS v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-
+    // =========================
+    // CONFIG
+    // =========================
     const SUPABASE_URL = "https://ixqtbndjbqbkapghoszx.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_PAK28m8_Q4BpETQ0YWHjDg_oifolhDG";
 
     const TABLE_NAME = "menu_items_csv";
-    const IMAGE_BUCKET = "menu-images-test"; 
+    const IMAGE_BUCKET = "menu-images-test";
 
-
+    // =========================
+    // STATE
+    // =========================
     window.__db = window.__db || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const db = window.__db;
 
     let allItems = [];
     let currentCategory = "Food";
 
-  
-    const el = (id) => document.getElementById(id);
+    // CART state (stored)
+    const CART_KEY = "adi_menu_cart_v1";
+    const ORDER_KEY = "adi_menu_ordercode_v1";
 
+    // =========================
+    // HELPERS
+    // =========================
+    const el = (id) => document.getElementById(id);
 
     function slugify(str) {
       return String(str || "")
@@ -299,25 +347,143 @@
       );
     }
 
- function getPublicImageUrl(image_path) {
-  if (!image_path) return null;
+    function getPublicImageUrl(image_path) {
+      if (!image_path) return null;
+      const safePath = String(image_path)
+        .trim()
+        .split("/")
+        .map(part => encodeURIComponent(part.trim()))
+        .join("/");
+      return `${SUPABASE_URL}/storage/v1/object/public/${IMAGE_BUCKET}/${safePath}`;
+    }
 
-  const safePath = String(image_path)
-    .trim()
-    .split("/")
-    .map(part => encodeURIComponent(part.trim()))
-    .join("/");
+    function resolveImageUrl(item) {
+      return item.image_path ? getPublicImageUrl(item.image_path) : null;
+    }
 
-  return `${SUPABASE_URL}/storage/v1/object/public/${IMAGE_BUCKET}/${safePath}`;
-}
+    // =========================
+    // CART FUNCTIONS
+    // =========================
+    function loadCart() {
+      try { return JSON.parse(localStorage.getItem(CART_KEY) || "{}"); }
+      catch { return {}; }
+    }
 
+    function saveCart(cart) {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      updateCartBadge();
+    }
 
- function resolveImageUrl(item) {
-  return item.image_path ? getPublicImageUrl(item.image_path) : null;
-}
+    function getOrderCode() {
+      let code = localStorage.getItem(ORDER_KEY);
+      if (!code) {
+        code = generateOrderCode();
+        localStorage.setItem(ORDER_KEY, code);
+      }
+      return code;
+    }
 
+    function generateOrderCode() {
+      const n = Math.floor(100000 + Math.random() * 900000);
+      return `ADI-${n}`;
+    }
 
+    function cartCount(cart) {
+      return Object.values(cart).reduce((sum, x) => sum + (Number(x.qty) || 0), 0);
+    }
 
+    function updateCartBadge() {
+      const cart = loadCart();
+      el("cartCountBadge").textContent = cartCount(cart);
+    }
+
+    function addToCart(item) {
+      const cart = loadCart();
+      const id = String(item.id);
+
+      if (!cart[id]) {
+        cart[id] = {
+          id: item.id,
+          name: item.name || "",
+          price: Number(item.price) || 0,
+          image_path: item.image_path || null,
+          qty: 0
+        };
+      }
+      cart[id].qty += 1;
+      saveCart(cart);
+    }
+
+    function changeQty(itemId, delta) {
+      const cart = loadCart();
+      const id = String(itemId);
+      if (!cart[id]) return;
+
+      cart[id].qty = (Number(cart[id].qty) || 0) + delta;
+      if (cart[id].qty <= 0) delete cart[id];
+
+      saveCart(cart);
+      renderCartModal();
+    }
+
+    function clearCart() {
+      localStorage.removeItem(CART_KEY);
+      updateCartBadge();
+      renderCartModal();
+    }
+
+    function calcTotal(cart) {
+      return Object.values(cart).reduce((sum, x) => sum + (Number(x.price)||0) * (Number(x.qty)||0), 0);
+    }
+
+    function renderCartModal() {
+      const cart = loadCart();
+      const items = Object.values(cart);
+
+      const list = el("cartList");
+      const empty = el("cartEmpty");
+
+      el("cartOrderCode").textContent = `Order Code: ${getOrderCode()}`;
+      list.innerHTML = "";
+
+      if (items.length === 0) {
+        empty.style.display = "block";
+      } else {
+        empty.style.display = "none";
+        for (const it of items) {
+          const imgUrl = it.image_path ? getPublicImageUrl(it.image_path) : null;
+          const finalImgUrl = imgUrl || "./assets/placeholder.webp";
+
+          const row = document.createElement("div");
+          row.className = "list-group-item d-flex align-items-center justify-content-between gap-3";
+
+          row.innerHTML = `
+            <div class="d-flex align-items-center gap-3" style="min-width:0;">
+              <img class="cart-item-img" src="${finalImgUrl}" onerror="this.onerror=null;this.src='./assets/placeholder.webp';" alt="">
+              <div style="min-width:0;">
+                <div class="fw-semibold text-truncate">${it.name}</div>
+                <div class="small text-muted">${priceUSD(it.price)} each</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-outline-secondary" data-cart-dec="${it.id}">−</button>
+              <span class="fw-semibold" style="min-width:24px; text-align:center;">${it.qty}</span>
+              <button class="btn btn-sm btn-outline-secondary" data-cart-inc="${it.id}">+</button>
+              <div class="fw-bold ms-2">${priceUSD((Number(it.price)||0) * (Number(it.qty)||0))}</div>
+            </div>
+          `;
+
+          list.appendChild(row);
+        }
+      }
+
+      el("cartTotal").textContent = priceUSD(calcTotal(cart));
+    }
+
+    // =========================
+    // FETCH
+    // =========================
     async function fetchMenuItems() {
       el("statusText").textContent = "Loading menu from database…";
 
@@ -338,39 +504,40 @@
       }
 
       allItems = data || [];
-     el("statusText").style.display = "none";
-
+      el("statusText").style.display = "none";
     }
 
-document.addEventListener("click", (e) => {
-  const wrap = e.target.closest(".item-desc-wrap");
-  if (!wrap) return;
-
-  const desc = wrap.querySelector(".item-desc");
-  if (!desc) return;
-
-  desc.classList.toggle("expanded");
-  wrap.classList.toggle("expanded");
-});
-
-
-function markTruncatedDescriptions() {
-  requestAnimationFrame(() => {
-    document.querySelectorAll(".item-desc-wrap").forEach(wrap => {
-      wrap.classList.remove("truncated");
+    // =========================
+    // DESCRIPTION EXPAND
+    // =========================
+    document.addEventListener("click", (e) => {
+      const wrap = e.target.closest(".item-desc-wrap");
+      if (!wrap) return;
 
       const desc = wrap.querySelector(".item-desc");
       if (!desc) return;
 
-      // only if the clamped preview is actually overflowing
-      if (!desc.classList.contains("expanded") && desc.scrollHeight > desc.clientHeight + 1) {
-        wrap.classList.add("truncated");
-      }
+      desc.classList.toggle("expanded");
+      wrap.classList.toggle("expanded");
     });
-  });
-}
 
+    function markTruncatedDescriptions() {
+      requestAnimationFrame(() => {
+        document.querySelectorAll(".item-desc-wrap").forEach(wrap => {
+          wrap.classList.remove("truncated");
+          const desc = wrap.querySelector(".item-desc");
+          if (!desc) return;
 
+          if (!desc.classList.contains("expanded") && desc.scrollHeight > desc.clientHeight + 1) {
+            wrap.classList.add("truncated");
+          }
+        });
+      });
+    }
+
+    // =========================
+    // RENDER
+    // =========================
     function renderCategoryButtons() {
       document.querySelectorAll(".category-btn").forEach(btn => {
         const cat = btn.getAttribute("data-category");
@@ -406,116 +573,120 @@ function markTruncatedDescriptions() {
       }
     }
 
-   function renderSections(itemsForCategory) {
-  const content = el("content");
-  content.innerHTML = "";
+    function renderSections(itemsForCategory) {
+      const content = el("content");
+      content.innerHTML = "";
 
-  if (itemsForCategory.length === 0) {
-    content.innerHTML = `
-      <div class="alert alert-warning">
-        No items found in <strong>${currentCategory}</strong>.
-      </div>
-    `;
-    return;
-  }
+      if (itemsForCategory.length === 0) {
+        content.innerHTML = `
+          <div class="alert alert-warning">
+            No items found in <strong>${currentCategory}</strong>.
+          </div>`;
+        return;
+      }
 
-  const grouped = groupBy(itemsForCategory, x => x.subcategory || "Other");
+      const grouped = groupBy(itemsForCategory, x => x.subcategory || "Other");
+      const subcats = Array.from(grouped.keys()).sort((a, b) => {
+        const oa = Math.min(...(grouped.get(a) || []).map(x => Number(x.subcategory_order ?? 999)));
+        const ob = Math.min(...(grouped.get(b) || []).map(x => Number(x.subcategory_order ?? 999)));
+        if (oa !== ob) return oa - ob;
+        return String(a).localeCompare(String(b));
+      });
 
-  const subcats = Array.from(grouped.keys()).sort((a, b) => {
-    const oa = Math.min(...(grouped.get(a) || []).map(x => Number(x.subcategory_order ?? 999)));
-    const ob = Math.min(...(grouped.get(b) || []).map(x => Number(x.subcategory_order ?? 999)));
-    if (oa !== ob) return oa - ob;
-    return String(a).localeCompare(String(b));
-  });
+      for (const subcat of subcats) {
+        const sectionId = `${slugify(currentCategory)}-${slugify(subcat)}`;
 
-  for (const subcat of subcats) {
-    const sectionId = `${slugify(currentCategory)}-${slugify(subcat)}`;
+        const section = document.createElement("section");
+        section.className = "mb-5 section-anchor";
+        section.id = sectionId;
 
-    const section = document.createElement("section");
-    section.className = "mb-5 section-anchor";
-    section.id = sectionId;
-
-    section.innerHTML = `
-      <div class="d-flex align-items-center justify-content-between mb-3">
-        <h2 class="subcat-title">${subcat}</h2>
-      </div>
-      <div class="row g-3" id="grid-${sectionId}"></div>
-    `;
-
-    content.appendChild(section);
-
-    const grid = document.getElementById(`grid-${sectionId}`);
-    const itemsSorted = sortByName(grouped.get(subcat));
-
-    for (const item of itemsSorted) {
-      const imgUrl = resolveImageUrl(item);
-      const finalImgUrl = imgUrl || "./assets/placeholder.webp";
-
-      const col = document.createElement("div");
-      col.className = "col-12 col-md-6 col-lg-4";
-
-      col.innerHTML = `
-        <div class="card menu-card h-100">
-          <img
-            src="${finalImgUrl}"
-            alt="${item.name || "Menu item"}"
-            class="item-img"
-            loading="lazy"
-            onerror="this.onerror=null; this.src='./assets/placeholder.webp';"
-          />
-
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start gap-3">
-              <div>
-                <div class="item-name fw-semibold">${item.name ?? ""}</div>
-                ${
-                  item.description
-                    ? `
-                      <div class="item-desc-wrap">
-                        <span class="item-desc">${item.description}</span>
-                        <span class="desc-more">more</span>
-                      </div>
-                    `
-                    : ""
-                }
-              </div>
-              <div class="price">${priceUSD(item.price)}</div>
-            </div>
+        section.innerHTML = `
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="subcat-title">${subcat}</h2>
           </div>
-        </div>
-      `;
+          <div class="row g-3" id="grid-${sectionId}"></div>
+        `;
 
-      grid.appendChild(col);
+        content.appendChild(section);
+
+        const grid = document.getElementById(`grid-${sectionId}`);
+        const itemsSorted = sortByName(grouped.get(subcat));
+
+        for (const item of itemsSorted) {
+          const imgUrl = resolveImageUrl(item);
+          const finalImgUrl = imgUrl || "./assets/placeholder.webp";
+
+          const col = document.createElement("div");
+          col.className = "col-12 col-md-6 col-lg-4";
+
+          col.innerHTML = `
+            <div class="card menu-card h-100">
+              <img
+                src="${finalImgUrl}"
+                alt="${item.name || "Menu item"}"
+                class="item-img"
+                loading="lazy"
+                onerror="this.onerror=null; this.src='./assets/placeholder.webp';"
+              />
+
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div style="min-width:0;">
+                    <div class="item-name fw-semibold">${item.name ?? ""}</div>
+                    ${
+                      item.description
+                        ? `
+                          <div class="item-desc-wrap">
+                            <span class="item-desc">${item.description}</span>
+                            <span class="desc-more">more</span>
+                          </div>`
+                        : ""
+                    }
+                  </div>
+
+                <div class="d-flex flex-column align-items-end">
+  <div class="price">${priceUSD(item.price)}</div>
+
+  <button class="btn btn-sm btn-outline-dark mt-2 order-btn"
+          data-add-to-cart="${item.id}">
+    Add order
+  </button>
+</div>
+
+                </div>
+              </div>
+            </div>
+          `;
+
+          grid.appendChild(col);
+        }
+      }
+
+      markTruncatedDescriptions();
     }
-  }
-
-  // IMPORTANT: call after DOM is rendered
-  markTruncatedDescriptions();
-}
-
 
     function renderCurrentCategory() {
       renderCategoryButtons();
 
-      // be tolerant to spaces/case so it never breaks again
       const itemsForCategory = allItems.filter(x =>
         String(x.category || "").trim().toLowerCase() === currentCategory.toLowerCase()
       );
 
       const grouped = groupBy(itemsForCategory, x => x.subcategory || "Other");
       const subcategories = Array.from(grouped.keys()).sort((a, b) => {
-       const oa = Math.min(...(grouped.get(a) || []).map(x => Number(x.subcategory_order ?? 999)));
-       const ob = Math.min(...(grouped.get(b) || []).map(x => Number(x.subcategory_order ?? 999)));
-       if (oa !== ob) return oa - ob;
+        const oa = Math.min(...(grouped.get(a) || []).map(x => Number(x.subcategory_order ?? 999)));
+        const ob = Math.min(...(grouped.get(b) || []).map(x => Number(x.subcategory_order ?? 999)));
+        if (oa !== ob) return oa - ob;
         return String(a).localeCompare(String(b));
       });
-
 
       renderSubcategoryStrip(subcategories);
       renderSections(itemsForCategory);
     }
 
-  
+    // =========================
+    // EVENTS
+    // =========================
     function wireEvents() {
       document.querySelectorAll(".category-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -528,18 +699,51 @@ function markTruncatedDescriptions() {
       el("scrollToTopBtn").addEventListener("click", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
+
+      // Delegate clicks: add-to-cart / cart qty
+      document.addEventListener("click", (e) => {
+        const addBtn = e.target.closest("[data-add-to-cart]");
+        if (addBtn) {
+          const id = addBtn.getAttribute("data-add-to-cart");
+          const item = allItems.find(x => String(x.id) === String(id));
+          if (item) addToCart(item);
+          return;
+        }
+
+        const inc = e.target.closest("[data-cart-inc]");
+        if (inc) {
+          changeQty(inc.getAttribute("data-cart-inc"), +1);
+          return;
+        }
+
+        const dec = e.target.closest("[data-cart-dec]");
+        if (dec) {
+          changeQty(dec.getAttribute("data-cart-dec"), -1);
+          return;
+        }
+      });
+
+      // When cart modal opens
+      const cartModalEl = document.getElementById("cartModal");
+      cartModalEl.addEventListener("show.bs.modal", () => {
+        renderCartModal();
+      });
+
+      // Clear cart
+      el("clearCartBtn").addEventListener("click", () => {
+        clearCart();
+      });
     }
 
-
+    // =========================
+    // INIT
+    // =========================
     (async function init() {
+      updateCartBadge();
       wireEvents();
       await fetchMenuItems();
       renderCurrentCategory();
     })();
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
