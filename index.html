@@ -449,7 +449,7 @@ function markTruncatedDescriptions() {
 
     for (const item of itemsSorted) {
       const imgUrl = resolveImageUrl(item);
-      const finalImgUrl = imgUrl || "./assets/placeholder.png";
+      const finalImgUrl = imgUrl || "./assets/placeholder.webp";
 
       const col = document.createElement("div");
       col.className = "col-12 col-md-6 col-lg-4";
@@ -461,7 +461,7 @@ function markTruncatedDescriptions() {
             alt="${item.name || "Menu item"}"
             class="item-img"
             loading="lazy"
-            onerror="this.onerror=null; this.src='./assets/placeholder.png';"
+            onerror="this.onerror=null; this.src='./assets/placeholder.webp';"
           />
 
           <div class="card-body">
@@ -541,4 +541,5 @@ function markTruncatedDescriptions() {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
