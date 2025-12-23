@@ -98,7 +98,16 @@
     border: 1px solid var(--adi-border);
     box-shadow: 0 10px 26px rgba(0,0,0,.06);
     transition: transform .12s ease, box-shadow .12s ease;
+    opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 1s ease forwards;
   }
+  @keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
   .menu-card:hover{
     transform: translateY(-2px);
     box-shadow: 0 14px 34px rgba(0,0,0,.08);
