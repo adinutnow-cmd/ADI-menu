@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Restaurant Menu</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+   <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="sticky-top bg-white sticky-top-shadow">
+    <div class="container py-3" id="top">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="brandbar">
+          <img class="brand-logo" src="assets/adi-logo.jpg" alt="ADI" />
+          <div>
+            <h1 class="h4 mb-0">Menu</h1>
+            <small class="text-muted" id="statusText">Loading…</small>
+          </div>
+        </div>
+
+<div class="d-flex flex-wrap gap-2 gap-md-3 align-items-center w-100" role="group" aria-label="Categories">
+  <button class="btn btn-outline-dark category-btn" data-category="Food">Food</button>
+  <button class="btn btn-outline-dark category-btn" data-category="Drinks">Drinks</button>
+  <button class="btn btn-outline-dark category-btn" data-category="Desserts">Desserts</button>
+
+  <!-- CART BUTTON (far right) -->
+  <button id="openCartBtn"
+          class="btn btn-dark cart-btn d-flex align-items-center gap-2 ms-auto"
+          data-bs-toggle="modal" data-bs-target="#cartModal">
+    My Order
+    <span id="cartCountBadge" class="badge rounded-pill cart-badge">0</span>
+  </button>
+</div>
+      </div>
+
+      <div class="mt-3">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="fw-semibold">Subcategories</div>
+          <button id="scrollToTopBtn" class="btn btn-sm btn-outline-secondary">Top</button>
+        </div>
+        <div class="mt-2 subcat-strip" id="subcatStrip"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container py-4">
+    <div id="content"></div>
+  </main>
+
+  <!-- CART MODAL -->
+  <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content" style="border-radius:18px; overflow:hidden;">
+        <div class="modal-header">
+          <div class="d-flex flex-column">
+            <h5 class="modal-title mb-0">Your Order</h5>
+            <small class="text-muted" id="cartOrderCode">Order Code: —</small>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div id="cartEmpty" class="text-center py-5 text-muted" style="display:none;">
+            Order is empty.
+          </div>
+
+          <div id="cartList" class="list-group"></div>
+
+          <div class="mt-3 d-flex justify-content-between align-items-center">
+            <div class="fw-semibold">Total</div>
+            <div class="fw-bold" id="cartTotal">$0.00</div>
+          </div>
+        </div>
+
+        <!-- ✅ EDITED FOOTER: only Clear + Close -->
+        <div class="modal-footer d-flex justify-content-between">
+          <button id="clearCartBtn" class="btn btn-outline-danger">Clear</button>
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="modal fade" id="imgModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body d-flex align-items-center justify-content-center p-2">
+        <img id="imgModalEl"
+             src=""
+             alt=""
+             style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Supabase JS v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="main.js"></script>
+  
+</body>
+</html>
