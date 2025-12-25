@@ -171,7 +171,7 @@
             <div class="d-flex align-items-center gap-3" style="min-width:0;">
               <img class="cart-item-img" src="${finalImgUrl}" onerror="this.onerror=null;this.src='./assets/placeholder.webp';" alt="">
               <div style="min-width:0;">
-                <div class="fw-semibold text-truncate">${it.name}</div>
+                <div class="fw-semibold cart-item-name">${it.name}</div>
                 <div class="small text-muted">${priceUSD(it.price)} each</div>
               </div>
             </div>

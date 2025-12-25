@@ -204,3 +204,9 @@
 #cartOrderCode{
   display:none !important;
 }
+.cart-item-name {
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.2rem;
+  max-width: 260px;
+}
