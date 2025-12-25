@@ -362,10 +362,11 @@
                 <div class="d-flex flex-column align-items-end">
   <div class="price">${priceUSD(item.price)}</div>
 
-  <button class="btn btn-sm btn-outline-dark mt-2 order-btn"
-          data-add-to-cart="${item.id}">
-    Add order
-  </button>
+<button class="btn btn-sm btn-outline-dark mt-2 order-btn"
+        data-add-to-cart="${item.id}">
+  Add Order
+</button>
+
 </div>
 
                 </div>
@@ -398,6 +399,28 @@
       renderSubcategoryStrip(subcategories);
       renderSections(itemsForCategory);
     }
+function animateAddFeedback(btn){
+  if (!btn) return;
+
+  const originalText = btn.textContent.trim();
+  btn.classList.add("added");
+  btn.textContent = "✓ Added";
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.classList.remove("added");
+    btn.textContent = originalText;   // returns to "Add Order"
+    btn.disabled = false;
+  }, 650);
+
+  // badge pop
+  const badge = el("cartCountBadge");
+  if (badge) {
+    badge.classList.remove("pop"); // restart animation
+    void badge.offsetWidth;        // force reflow
+    badge.classList.add("pop");
+  }
+}
 
     // =========================
     // EVENTS
@@ -417,13 +440,17 @@
 
       // Delegate clicks: add-to-cart / cart qty
       document.addEventListener("click", (e) => {
-        const addBtn = e.target.closest("[data-add-to-cart]");
-        if (addBtn) {
-          const id = addBtn.getAttribute("data-add-to-cart");
-          const item = allItems.find(x => String(x.id) === String(id));
-          if (item) addToCart(item);
-          return;
-        }
+       const addBtn = e.target.closest("[data-add-to-cart]");
+if (addBtn) {
+  const id = addBtn.getAttribute("data-add-to-cart");
+  const item = allItems.find(x => String(x.id) === String(id));
+  if (item) {
+    addToCart(item);
+    animateAddFeedback(addBtn);
+  }
+  return;
+}
+
 
         const inc = e.target.closest("[data-cart-inc]");
         if (inc) {

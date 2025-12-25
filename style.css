@@ -197,7 +197,22 @@
   padding-left: .75rem;
   padding-right: .75rem;
 }
+.order-btn.added{
+  background: var(--adi-teal) !important;
+  border-color: var(--adi-teal) !important;
+  color: #fff !important;
+}
 
+/* Cart badge pop */
+@keyframes badgePop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.cart-badge.pop{
+  animation: badgePop .35s ease;
+}
 @media (max-width: 380px){
   .order-btn{ min-width: 96px; font-size: .82rem; }
 }
