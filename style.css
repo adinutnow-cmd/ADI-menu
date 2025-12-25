@@ -187,6 +187,25 @@
     width:44px;height:44px;object-fit:cover;border-radius:10px;background:#eef2f7;
     border:1px solid rgba(0,0,0,.06);
   }
+.btn-adi{
+  background:#f4b50e;
+  color: black;
+  border: none;
+}
+.btn-adi-counter{
+  background-color: #4db8a8;
+  margin: 3px 3px 0px 3px;
+}
+
+.btn-adi:hover{
+  background: var(--adi-teal-dark);
+  color: #fff;
+}
+
+.btn-adi:active{
+  background: var(--adi-teal-dark);
+  transform: scale(.97);
+}
 
   /* ✅ ORDER BUTTON (fix wrap + responsive width) */
  /* ✅ only the button */
