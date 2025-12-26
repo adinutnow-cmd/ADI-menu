@@ -84,6 +84,12 @@
   .subcat-chip:active{ transform: scale(.98); }
 
   .section-anchor{ scroll-margin-top: 175px; }
+.subcat-ar{
+  font-weight: 700;
+  color: var(--adi-muted);
+  margin-left: .35rem;
+  font-size: 1.05rem;
+}
 
   /* cards */
   .menu-card{

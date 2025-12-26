@@ -199,7 +199,7 @@
 
       const { data, error } = await db
         .from(TABLE_NAME)
-        .select("id, category, subcategory, subcategory_order, name, description, price, image_path, is_available, name_ar")
+        .select("id, category, subcategory, subcategory_order, name, description, price, image_path, is_available, name_ar, subcategory_ar")
         .eq("is_available", true);
 
       if (error) {
@@ -312,7 +312,14 @@
 
         section.innerHTML = `
           <div class="d-flex align-items-center justify-content-between mb-3">
-            <h2 class="subcat-title">${subcat}</h2>
+            ${(() => {
+  const firstItem = (grouped.get(subcat) || [])[0];
+  const ar = firstItem?.subcategory_ar?.trim();
+  return `<h2 class="subcat-title">
+            ${subcat}${ar ? ` <span class="subcat-ar">- ${ar}</span>` : ""}
+          </h2>`;
+})()}
+
           </div>
           <div class="row g-3" id="grid-${sectionId}"></div>
         `;
