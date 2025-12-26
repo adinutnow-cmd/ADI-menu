@@ -199,7 +199,7 @@
 
       const { data, error } = await db
         .from(TABLE_NAME)
-        .select("id, category, subcategory, subcategory_order, name, description, price, image_path, is_available")
+        .select("id, category, subcategory, subcategory_order, name, description, price, image_path, is_available, name_ar")
         .eq("is_available", true);
 
       if (error) {
@@ -347,7 +347,13 @@
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start gap-3">
                   <div style="min-width:0;">
-                    <div class="item-name fw-semibold">${item.name ?? ""}</div>
+                   <div class="item-name fw-semibold">${item.name ?? ""}</div>
+${
+  item.name_ar
+    ? `<div class="item-name-ar">${item.name_ar}</div>`
+    : ""
+}
+
                     ${
                       item.description
                         ? `

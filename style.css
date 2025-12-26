@@ -51,6 +51,11 @@
     color:#fff !important;
     box-shadow: 0 8px 18px rgba(79,183,166,.25);
   }
+.category-btn:hover,
+.category-btn:focus {
+  background-color: transparent;
+  color: var(--adi-ink);
+}
 
   /* subcategory strip */
   .subcat-strip{
@@ -115,6 +120,13 @@
      font-size: 0.95rem;
      font-weight: 700;
   }
+.item-name-ar{
+  font-size: 0.8rem;
+  color: var(--adi-muted);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
 
   .menu-card .card-body{
     padding: .7rem .75rem;
