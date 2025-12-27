@@ -146,50 +146,121 @@
       return Object.values(cart).reduce((sum, x) => sum + (Number(x.price)||0) * (Number(x.qty)||0), 0);
     }
 
-    function renderCartModal() {
-      const cart = loadCart();
-      const items = Object.values(cart);
+function renderCartModal() {
+  const cart = loadCart();
+  const items = Object.values(cart);
 
-      const list = el("cartList");
-      const empty = el("cartEmpty");
+  const list = el("cartList");
+  const empty = el("cartEmpty");
 
-      el("cartOrderCode").textContent = `Order Code: ${getOrderCode()}`;
-      list.innerHTML = "";
+  // (you said you want to remove order code later - you can comment this)
+  el("cartOrderCode").textContent = `Order Code: ${getOrderCode()}`;
 
-      if (items.length === 0) {
-        empty.style.display = "block";
-      } else {
-        empty.style.display = "none";
-        for (const it of items) {
-          const imgUrl = it.image_path ? getPublicImageUrl(it.image_path) : null;
-          const finalImgUrl = imgUrl || "./assets/placeholder.webp";
+  list.innerHTML = "";
 
-          const row = document.createElement("div");
-          row.className = "list-group-item d-flex align-items-center justify-content-between gap-3";
+  if (items.length === 0) {
+    empty.style.display = "block";
+  } else {
+    empty.style.display = "none";
 
-          row.innerHTML = `
-            <div class="d-flex align-items-center gap-3" style="min-width:0;">
-              <img class="cart-item-img" src="${finalImgUrl}" onerror="this.onerror=null;this.src='./assets/placeholder.webp';" alt="">
-              <div style="min-width:0;">
-                <div class="fw-semibold cart-item-name">${it.name}</div>
-                <div class="small text-muted">${priceUSD(it.price)} each</div>
-              </div>
-            </div>
+    for (const it of items) {
+      const imgUrl = it.image_path ? getPublicImageUrl(it.image_path) : null;
+      const finalImgUrl = imgUrl || "./assets/placeholder.webp";
+      const note = (it.note || "").trim();
 
-            <div class="d-flex align-items-center gap-2">
-              <button class="btn btn-sm btn-outline-secondary" data-cart-dec="${it.id}">−</button>
-              <span class="fw-semibold" style="min-width:24px; text-align:center;">${it.qty}</span>
-              <button class="btn btn-sm btn-outline-secondary" data-cart-inc="${it.id}">+</button>
-              <div class="fw-bold ms-2">${priceUSD((Number(it.price)||0) * (Number(it.qty)||0))}</div>
-            </div>
-          `;
+      const row = document.createElement("div");
+row.className = "list-group-item d-flex align-items-start justify-content-between gap-3";
 
-          list.appendChild(row);
-        }
-      }
+row.innerHTML = `
+  <div class="d-flex align-items-start gap-3" style="min-width:0; flex:1;">
+    <img class="cart-item-img" src="${finalImgUrl}"
+         onerror="this.onerror=null;this.src='./assets/placeholder.webp';" alt="">
 
-      el("cartTotal").textContent = priceUSD(calcTotal(cart));
+    <div style="min-width:0; flex:1;">
+      <div class="fw-semibold cart-item-name">${it.name}</div>
+
+      <button class="btn btn-link p-0 text-decoration-none add-note-btn"
+              data-note-edit="${it.id}">
+        Add note
+      </button>
+
+      ${it.note ? `<div class="small text-muted fst-italic">Note: ${it.note}</div>` : ""}
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center gap-2 flex-nowrap" style="white-space:nowrap;">
+  <button class="btn btn-sm btn-outline-secondary" data-cart-dec="${it.id}">−</button>
+  <span class="fw-semibold" style="min-width:24px; text-align:center;">${it.qty}</span>
+  <button class="btn btn-sm btn-outline-secondary" data-cart-inc="${it.id}">+</button>
+
+  <div class="fw-bold ms-2">
+    ${priceUSD((Number(it.price)||0) * (Number(it.qty)||0))}
+  </div>
+</div>
+
+`;
+
+
+      list.appendChild(row);
     }
+  }
+
+  el("cartTotal").textContent = priceUSD(calcTotal(cart));
+}
+
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+let currentNoteItemId = null;
+
+function setItemNote(itemId, noteText){
+  const cart = loadCart();
+  const id = String(itemId);
+  if (!cart[id]) return;
+
+  const t = String(noteText || "").trim();
+  if (t) cart[id].note = t;
+  else delete cart[id].note;
+
+  saveCart(cart);
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-note-edit]");
+  if (!btn) return;
+
+  const itemId = btn.getAttribute("data-note-edit");
+  const cart = loadCart();
+  const it = cart[String(itemId)];
+  if (!it) return;
+
+  currentNoteItemId = String(itemId);
+
+  el("noteItemTitle").textContent = it.name || "Item";
+  el("noteText").value = it.note || "";
+
+  const modal = new bootstrap.Modal(document.getElementById("noteModal"));
+  modal.show();
+});
+
+el("saveNoteBtn").addEventListener("click", () => {
+  if (!currentNoteItemId) return;
+  setItemNote(currentNoteItemId, el("noteText").value);
+  renderCartModal();
+  bootstrap.Modal.getInstance(document.getElementById("noteModal"))?.hide();
+});
+
+el("clearNoteBtn").addEventListener("click", () => {
+  if (!currentNoteItemId) return;
+  setItemNote(currentNoteItemId, "");
+  renderCartModal();
+  bootstrap.Modal.getInstance(document.getElementById("noteModal"))?.hide();
+});
 
     // =========================
     // FETCH

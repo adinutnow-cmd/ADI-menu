@@ -205,6 +205,25 @@
     width:44px;height:44px;object-fit:cover;border-radius:10px;background:#eef2f7;
     border:1px solid rgba(0,0,0,.06);
   }
+  .note-btn{
+  width:34px;
+  height:34px;
+  border-radius:999px !important;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.note-preview{
+  font-size:.78rem;
+  color: var(--adi-muted);
+  margin-top:.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
 .btn-adi{
   background:#f4b50e;
   color: black;
