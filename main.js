@@ -568,7 +568,10 @@ if (addBtn) {
       updateCartBadge();
       wireEvents();
       await fetchMenuItems();
-      renderCurrentCategory();
+      renderCurrentCategory()
+      localStorage.removeItem(CART_KEY);
+      updateCartBadge();
+;
     })();
     document.addEventListener("click", (e) => {
   const img = e.target.closest("img[data-fullimg]");
